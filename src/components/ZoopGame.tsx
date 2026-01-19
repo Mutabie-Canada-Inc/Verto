@@ -1,21 +1,35 @@
 "use client";
 
+/**
+ * @file ZoopGame.tsx
+ * @description Main client-side game component. Handles user interaction, state, and rendering.
+ * @author Mutabie Canada Inc.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { generatePuzzle, Difficulty, Board, GRID_SIZE, TOTAL_CELLS } from '@/lib/game-logic';
 import { submitScore } from '@/actions/game-actions';
+import GameTimer from './GameTimer';
 
 export default function ZoopGame() {
+    // Game State
     const [difficulty, setDifficulty] = useState<Difficulty>('easy');
     const [board, setBoard] = useState<Board>([]);
     const [userPath, setUserPath] = useState<{ x: number, y: number, value: number }[]>([]);
     const [isWon, setIsWon] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [validationMsg, setValidationMsg] = useState<string>("");
+    const [gameId, setGameId] = useState(0);
 
+    // Initialization
     useEffect(() => {
         startNewGame(difficulty);
     }, []);
 
+    /**
+     * Resets the game with a new puzzle of the specified difficulty.
+     * @param diff 'easy' | 'medium' | 'hard'
+     */
     const startNewGame = (diff: Difficulty) => {
         setDifficulty(diff);
         const newBoard = generatePuzzle(diff);
@@ -23,7 +37,9 @@ export default function ZoopGame() {
         setIsWon(false);
         setUserPath([]);
         setValidationMsg("");
+        setGameId(prev => prev + 1);
 
+        // Auto-select the '1' cell to start
         for (let y = 0; y < GRID_SIZE; y++) {
             for (let x = 0; x < GRID_SIZE; x++) {
                 if (newBoard[y][x].value === 1) {
@@ -36,9 +52,14 @@ export default function ZoopGame() {
 
     const currentHead = userPath[userPath.length - 1];
 
+    /**
+     * Attempts to move/extend the path to coordinates (x,y).
+     * Validates moves locally before updating state.
+     */
     const tryMove = (x: number, y: number) => {
         if (isWon || !currentHead) return;
 
+        // Undo Logic: Allow stepping back
         if (userPath.length > 1) {
             const prev = userPath[userPath.length - 2];
             if (prev.x === x && prev.y === y) {
@@ -47,21 +68,25 @@ export default function ZoopGame() {
             }
         }
 
+        // Validity Check: Must be neighbor
         const dist = Math.abs(x - currentHead.x) + Math.abs(y - currentHead.y);
         if (dist !== 1) return;
 
         const nextVal = currentHead.value + 1;
         const fixedCell = board[y][x];
 
+        // Constraint Check: Fixed cells must match sequence
         if (fixedCell.isFixed) {
             if (fixedCell.value !== nextVal) return;
         } else {
+            // Constraint Check: Cannot cross own path
             if (userPath.some(p => p.x === x && p.y === y)) return;
         }
 
         const newPath = [...userPath, { x, y, value: nextVal }];
         setUserPath(newPath);
 
+        // Win Condition
         if (newPath.length === TOTAL_CELLS) {
             setIsWon(true);
             setValidationMsg("Verifying...");
@@ -73,6 +98,7 @@ export default function ZoopGame() {
         }
     };
 
+    // Pointer Handlers for Drag Interaction
     const handlePointerDown = (x: number, y: number, e: React.PointerEvent) => {
         e.preventDefault();
         if (currentHead && x === currentHead.x && y === currentHead.y) {
@@ -101,15 +127,15 @@ export default function ZoopGame() {
         return null;
     };
 
-    // Helper to determine connector directions
+    // Helper: Determine visually connected neighbors for drawing lines
     const getConnectors = (x: number, y: number) => {
         const idx = userPath.findIndex(p => p.x === x && p.y === y);
         if (idx === -1) return [];
 
         const connectors: ('top' | 'bottom' | 'left' | 'right')[] = [];
-        const curr = userPath[idx];
+        // const curr = userPath[idx]; // unused
 
-        // Check Previous
+        // Previous connection
         if (idx > 0) {
             const prev = userPath[idx - 1];
             if (prev.x === x && prev.y < y) connectors.push('top');
@@ -118,7 +144,7 @@ export default function ZoopGame() {
             if (prev.x > x && prev.y === y) connectors.push('right');
         }
 
-        // Check Next
+        // Next connection
         if (idx < userPath.length - 1) {
             const next = userPath[idx + 1];
             if (next.x === x && next.y < y) connectors.push('top');
@@ -131,7 +157,7 @@ export default function ZoopGame() {
 
     return (
         <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md select-none touch-none">
-            {/* Controls */}
+            {/* Difficulty Controls */}
             <div className="flex gap-4 items-center w-full justify-between">
                 <div className="flex bg-white rounded-lg p-1 shadow-sm border border-slate-200">
                     {(['easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
@@ -140,7 +166,7 @@ export default function ZoopGame() {
                             onClick={() => startNewGame(d)}
                             className={`
                         px-3 py-1 text-sm font-medium rounded-md capitalize transition-colors
-                        ${difficulty === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}
+                        ${difficulty === d ? 'bg-zoop-primary text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}
                     `}
                         >
                             {d}
@@ -155,9 +181,9 @@ export default function ZoopGame() {
                 </button>
             </div>
 
-            {/* Grid */}
+            {/* Game Grid */}
             <div
-                className="grid gap-1 bg-slate-200 p-2 rounded-xl shadow-inner w-full aspect-square"
+                className="grid gap-1 bg-zoop-grid-bg p-2 rounded-xl shadow-inner w-full aspect-square text-md"
                 style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)` }}
             >
                 {Array.from({ length: GRID_SIZE }).map((_, y) =>
@@ -168,21 +194,21 @@ export default function ZoopGame() {
                         const inPath = !!userPath.find(p => p.x === x && p.y === y);
                         const connectors = getConnectors(x, y);
 
-                        let cellClass = "bg-white text-slate-400"; // default empty
+                        // Styling Logic using Centralized CSS Variables
+                        let cellClass = "bg-white text-slate-400";
 
                         if (isWon && inPath) {
-                            cellClass = "bg-green-500 text-white scale-95 rounded-lg shadow-sm";
+                            cellClass = "bg-zoop-success text-white scale-95 rounded-lg shadow-sm";
                         } else if (isHead) {
-                            cellClass = "bg-blue-600 text-white shadow-md z-20 scale-105 rounded-lg ring-2 ring-blue-600/30";
+                            cellClass = "bg-zoop-primary text-white shadow-md z-20 scale-105 rounded-lg ring-2 ring-blue-600/30";
                         } else if (inPath) {
-                            cellClass = "bg-blue-50 text-blue-700";
+                            cellClass = "bg-blue-50 text-zoop-primary";
                         } else if (isFixed) {
                             cellClass = "bg-slate-200/50 text-slate-800 font-bold";
                         }
 
                         // Determine connector color
-                        const connectorColor = isWon ? "bg-green-500" : "bg-blue-500";
-                        // If it's the head, maybe hide outward connector? No, head only has prev connector.
+                        const connectorColor = isWon ? "bg-zoop-success" : "bg-zoop-primary";
 
                         return (
                             <div
@@ -195,7 +221,7 @@ export default function ZoopGame() {
                                     transition-all duration-200 overflow-hidden ${cellClass}
                                  `}
                             >
-                                {/* Connectors */}
+                                {/* Path Connectors */}
                                 {inPath && !isWon && (
                                     <>
                                         {connectors.includes('top') && (
@@ -210,7 +236,7 @@ export default function ZoopGame() {
                                         {connectors.includes('right') && (
                                             <div className={`absolute top-1/2 right-0 -translate-y-1/2 w-1/2 h-1.5 ${connectorColor} z-0`} />
                                         )}
-                                        {/* Center hub to smooth joins */}
+                                        {/* Smoother Corner Joints */}
                                         {connectors.length > 0 && (
                                             <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${connectorColor} z-0`} />
                                         )}
@@ -224,7 +250,12 @@ export default function ZoopGame() {
                 )}
             </div>
 
-            {/* Status */}
+            {/* Timer */}
+            <div className="flex justify-center py-2 h-10 w-full">
+                <GameTimer key={gameId} isRunning={!isWon} />
+            </div>
+
+            {/* Game Status / Progress */}
             <div className="text-center h-16 w-full flex items-center justify-center">
                 {isWon ? (
                     <div className="flex flex-col gap-1 items-center animate-bounce">

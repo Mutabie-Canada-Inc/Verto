@@ -2,9 +2,29 @@
 
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Centralized Color Palette */
+  --color-zoop-primary: #2563EB;     /* Blue 600 */
+  --color-zoop-primary-fg: #FFFFFF;
+  
+  --color-zoop-secondary: #F1F5F9;   /* Slate 100 */
+  --color-zoop-secondary-fg: #334155; /* Slate 700 */
+  
+  --color-zoop-accent: #16A34A;      /* Green 600 */
+  --color-zoop-accent-fg: #FFFFFF;
+  
+  --color-zoop-bg: #F8FAFC;          /* Slate 50 */
+  --color-zoop-surface: #FFFFFF;
+  
+  --color-zoop-grid-bg: #E2E8F0;     /* Slate 200 */
+  
+  /* Status Colors */
+  --color-zoop-success: #22C55E;
+  --color-zoop-error: #EF4444;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900;
+  background-color: var(--color-zoop-bg);
+  color: #0F172A; /* Slate 900 */
   font-family: var(--font-sans);
 }
