@@ -61,7 +61,7 @@ export default function HowToPlayModal() {
                     <div className="space-y-6">
                         <section>
                             <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-verto-primary text-white text-xs">1</span>
+                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs">1</span>
                                 Sequential Flow
                             </h3>
                             <p className="text-slate-600">
@@ -71,7 +71,7 @@ export default function HowToPlayModal() {
 
                         <section>
                             <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-verto-primary text-white text-xs">2</span>
+                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs">2</span>
                                 Complete the Grid
                             </h3>
                             <p className="text-slate-600">
@@ -81,7 +81,7 @@ export default function HowToPlayModal() {
 
                         <section>
                             <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-verto-primary text-white text-xs">3</span>
+                                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs">3</span>
                                 The Hamiltonian Rule
                             </h3>
                             <p className="text-slate-600">

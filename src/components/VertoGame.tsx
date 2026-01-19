@@ -167,7 +167,7 @@ export default function VertoGame() {
                             onClick={() => startNewGame(d)}
                             className={`
                         px-3 py-1 text-sm font-medium rounded-md capitalize transition-colors
-                        ${difficulty === d ? 'bg-verto-primary text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}
+                        ${difficulty === d ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}
                     `}
                         >
                             {d}
@@ -195,21 +195,21 @@ export default function VertoGame() {
                         const inPath = !!userPath.find(p => p.x === x && p.y === y);
                         const connectors = getConnectors(x, y);
 
-                        // Styling Logic using Centralized CSS Variables
+                        // Styling Logic: Using standard utilities for reliability
                         let cellClass = "bg-white text-slate-400";
 
                         if (isWon && inPath) {
-                            cellClass = "bg-verto-success text-white scale-95 rounded-lg shadow-sm";
+                            cellClass = "bg-green-500 text-white scale-95 rounded-lg shadow-sm";
                         } else if (isHead) {
-                            cellClass = "bg-verto-primary text-white shadow-md z-20 scale-105 rounded-lg ring-2 ring-blue-600/30";
+                            cellClass = "bg-blue-600 text-white shadow-md z-20 scale-105 rounded-lg ring-2 ring-blue-600/30 font-bold";
                         } else if (inPath) {
-                            cellClass = "bg-blue-50 text-verto-primary";
+                            cellClass = "bg-blue-50 text-blue-600 font-semibold";
                         } else if (isFixed) {
                             cellClass = "bg-slate-200/50 text-slate-800 font-bold";
                         }
 
                         // Determine connector color
-                        const connectorColor = isWon ? "bg-verto-success" : "bg-verto-primary";
+                        const connectorColor = isWon ? "bg-green-500" : "bg-blue-600";
 
                         return (
                             <div

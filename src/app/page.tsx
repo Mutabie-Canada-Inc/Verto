@@ -11,6 +11,9 @@ export default function Home() {
           <h1 className="text-2xl font-black tracking-tight text-slate-600">
             One Path. Every Node. No Mistakes.
           </h1>
+
+          <div className="w-16 h-1 bg-blue-600 rounded-full mx-auto my-4"></div>
+
           <p className="text-slate-500 font-medium text-lg">
             The Daily Logic Path
           </p>

@@ -13,7 +13,7 @@ export default function Navbar() {
                     {/* Logo / Brand */}
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                            <div className="w-8 h-8 bg-verto-primary rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
                                 V
                             </div>
                             <span className="font-black text-xl tracking-tight text-slate-900">Verto</span>
@@ -22,7 +22,7 @@ export default function Navbar() {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
-                        <Link href="/about" className="text-slate-600 hover:text-verto-primary font-medium transition-colors">
+                        <Link href="/about" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
                             About & History
                         </Link>
                         <a
@@ -62,7 +62,7 @@ export default function Navbar() {
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <Link
                             href="/about"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-verto-primary hover:bg-slate-50"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             About & History
@@ -71,7 +71,7 @@ export default function Navbar() {
                             href="https://mutabie.ca/contact"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-verto-primary hover:bg-slate-50"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-slate-50"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Feedback
