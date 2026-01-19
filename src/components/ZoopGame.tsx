@@ -101,6 +101,34 @@ export default function ZoopGame() {
         return null;
     };
 
+    // Helper to determine connector directions
+    const getConnectors = (x: number, y: number) => {
+        const idx = userPath.findIndex(p => p.x === x && p.y === y);
+        if (idx === -1) return [];
+
+        const connectors: ('top' | 'bottom' | 'left' | 'right')[] = [];
+        const curr = userPath[idx];
+
+        // Check Previous
+        if (idx > 0) {
+            const prev = userPath[idx - 1];
+            if (prev.x === x && prev.y < y) connectors.push('top');
+            if (prev.x === x && prev.y > y) connectors.push('bottom');
+            if (prev.x < x && prev.y === y) connectors.push('left');
+            if (prev.x > x && prev.y === y) connectors.push('right');
+        }
+
+        // Check Next
+        if (idx < userPath.length - 1) {
+            const next = userPath[idx + 1];
+            if (next.x === x && next.y < y) connectors.push('top');
+            if (next.x === x && next.y > y) connectors.push('bottom');
+            if (next.x < x && next.y === y) connectors.push('left');
+            if (next.x > x && next.y === y) connectors.push('right');
+        }
+        return connectors;
+    };
+
     return (
         <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md select-none touch-none">
             {/* Controls */}
@@ -138,28 +166,23 @@ export default function ZoopGame() {
                         const isFixed = board[y]?.[x].isFixed;
                         const isHead = currentHead?.x === x && currentHead?.y === y;
                         const inPath = !!userPath.find(p => p.x === x && p.y === y);
+                        const connectors = getConnectors(x, y);
 
                         let cellClass = "bg-white text-slate-400"; // default empty
 
                         if (isWon && inPath) {
                             cellClass = "bg-green-500 text-white scale-95 rounded-lg shadow-sm";
                         } else if (isHead) {
-                            cellClass = "bg-blue-600 text-white shadow-md z-10 scale-105 rounded-lg ring-2 ring-blue-600/30";
+                            cellClass = "bg-blue-600 text-white shadow-md z-20 scale-105 rounded-lg ring-2 ring-blue-600/30";
                         } else if (inPath) {
-                            if (isFixed) {
-                                cellClass = "bg-blue-100 text-blue-900 border-2 border-blue-200"; // Fixed cell when visited
-                            } else {
-                                cellClass = "bg-blue-50 text-blue-700"; // Normal visited cell
-                            }
+                            cellClass = "bg-blue-50 text-blue-700";
                         } else if (isFixed) {
-                            cellClass = "bg-slate-100 text-slate-800 font-bold border-2 border-slate-200"; // Fixed but not visited?
-                            // Wait, logic says fixed cells must be part of path. They are just pre-filled visible numbers.
-                            // If not yet visited, they are just number hints.
-                            if (!inPath) {
-                                // Should we show the number? Yes.
-                                cellClass = "bg-slate-200/50 text-slate-800 font-bold";
-                            }
+                            cellClass = "bg-slate-200/50 text-slate-800 font-bold";
                         }
+
+                        // Determine connector color
+                        const connectorColor = isWon ? "bg-green-500" : "bg-blue-500";
+                        // If it's the head, maybe hide outward connector? No, head only has prev connector.
 
                         return (
                             <div
@@ -167,12 +190,34 @@ export default function ZoopGame() {
                                 onPointerDown={(e) => handlePointerDown(x, y, e)}
                                 onPointerEnter={() => handlePointerEnter(x, y)}
                                 className={`
-                    flex items-center justify-center 
-                    text-base sm:text-lg md:text-xl rounded-md cursor-pointer
-                    transition-all duration-200 ${cellClass}
-                 `}
+                                    relative flex items-center justify-center 
+                                    text-base sm:text-lg md:text-xl rounded-md cursor-pointer
+                                    transition-all duration-200 overflow-hidden ${cellClass}
+                                 `}
                             >
-                                {val}
+                                {/* Connectors */}
+                                {inPath && !isWon && (
+                                    <>
+                                        {connectors.includes('top') && (
+                                            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1/2 ${connectorColor} z-0`} />
+                                        )}
+                                        {connectors.includes('bottom') && (
+                                            <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1/2 ${connectorColor} z-0`} />
+                                        )}
+                                        {connectors.includes('left') && (
+                                            <div className={`absolute top-1/2 left-0 -translate-y-1/2 w-1/2 h-1.5 ${connectorColor} z-0`} />
+                                        )}
+                                        {connectors.includes('right') && (
+                                            <div className={`absolute top-1/2 right-0 -translate-y-1/2 w-1/2 h-1.5 ${connectorColor} z-0`} />
+                                        )}
+                                        {/* Center hub to smooth joins */}
+                                        {connectors.length > 0 && (
+                                            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${connectorColor} z-0`} />
+                                        )}
+                                    </>
+                                )}
+
+                                <span className="z-10 relative">{val}</span>
                             </div>
                         );
                     })
