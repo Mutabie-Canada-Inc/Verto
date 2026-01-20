@@ -19,6 +19,7 @@ import { generatePuzzle, Difficulty, Board, GRID_SIZE, TOTAL_CELLS } from '@/lib
 import { submitScore } from '@/actions/game-actions';
 import GameTimer from './GameTimer';
 import HowToPlayModal from './HowToPlayModal';
+import confetti from 'canvas-confetti';
 
 export default function VertoGame() {
     // Game State
@@ -29,6 +30,35 @@ export default function VertoGame() {
     const [isDragging, setIsDragging] = useState(false);
     const [validationMsg, setValidationMsg] = useState<string>("");
     const [gameId, setGameId] = useState(0);
+
+    const triggerConfetti = () => {
+        const count = 200;
+        const defaults = {
+            colors: ['#2563eb', '#3b82f6', '#60a5fa', '#ffffff'], // Blue theme
+            ticks: 200,
+            gravity: 1.2,
+            decay: 0.92,
+            startVelocity: 45,
+        };
+
+        const fire = (particleRatio: number, opts: any) => {
+            confetti({
+                ...defaults,
+                ...opts,
+                particleCount: Math.floor(count * particleRatio)
+            });
+        };
+
+        // Left Burst
+        fire(0.25, { spread: 26, startVelocity: 55, origin: { x: 0, y: 0.6 }, angle: 60 });
+        fire(0.2, { spread: 60, origin: { x: 0, y: 0.6 }, angle: 60 });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8, origin: { x: 0, y: 0.6 }, angle: 60 });
+
+        // Right Burst
+        fire(0.25, { spread: 26, startVelocity: 55, origin: { x: 1, y: 0.6 }, angle: 120 });
+        fire(0.2, { spread: 60, origin: { x: 1, y: 0.6 }, angle: 120 });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8, origin: { x: 1, y: 0.6 }, angle: 120 });
+    };
 
     // Initialization
     useEffect(() => {
@@ -99,6 +129,7 @@ export default function VertoGame() {
         if (newPath.length === TOTAL_CELLS) {
             setIsWon(true);
             setValidationMsg("Verifying...");
+            triggerConfetti();
             submitScore(newPath).then(res => {
                 setValidationMsg(res.message);
             }).catch(() => {
