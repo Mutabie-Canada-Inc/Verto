@@ -225,7 +225,7 @@ export default function VertoGame() {
     };
 
     return (
-        <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md select-none">
+        <div className="flex flex-col items-center gap-6 p-4 w-full max-w-sm sm:max-w-md  select-none">
             {/* Difficulty Controls */}
             <div className="flex gap-4 items-center w-full justify-between">
                 <div className="flex bg-white rounded-lg p-1 shadow-sm border border-slate-200">
