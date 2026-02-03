@@ -225,7 +225,7 @@ export default function VertoGame() {
     };
 
     return (
-        <div className="flex flex-col items-center gap-6 p-4 w-full max-w-md select-none">
+        <div className="flex flex-col items-center gap-6 p-4 w-full max-w-sm  sm:max-w-md  select-none">
             {/* Difficulty Controls */}
             <div className="flex gap-4 items-center w-full justify-between">
                 <div className="flex bg-white rounded-lg p-1 shadow-sm border border-slate-200">
@@ -252,7 +252,7 @@ export default function VertoGame() {
 
             {/* Game Grid */}
             <div
-                className="grid gap-1 bg-verto-grid-bg p-2 rounded-xl shadow-inner w-full aspect-square text-md touch-none"
+                className="grid gap-1 bg-verto-grid-bg p-2 rounded-xl shadow-inner w-[92vw] sm:w-full aspect-square text-md touch-none"
                 style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)` }}
             >
                 {Array.from({ length: GRID_SIZE }).map((_, y) =>
@@ -289,6 +289,7 @@ export default function VertoGame() {
                                 onPointerEnter={() => handlePointerEnter(x, y)}
                                 className={`
                                     relative flex items-center justify-center 
+                                    aspect-square min-h-[44px]
                                     text-base sm:text-lg md:text-xl rounded-md cursor-pointer
                                     transition-all duration-200 overflow-hidden ${cellClass}
                                  `}
